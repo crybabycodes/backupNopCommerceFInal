@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="Dave Automation Script">
+
+    <test name="com.NopCommerce Tests">
+
+        <parameter name="useCloudEnv" value="false"></parameter>
+        <parameter name="envName" value="browserstack"></parameter>
+        <parameter name="os" value="windows"></parameter>
+        <parameter name="osVersion" value="11"></parameter>
+        <parameter name="browserName" value="chrome"/>
+        <parameter name="browserVersion" value="112"/>
+        <parameter name="url" value="https://demo.nopcommerce.com/"/>
+
+        <classes>
+<!--            <class name="nopcommercetests.RegisterTest"></class>-->
+            <class name="nopcommercetests.CheckOutTest"></class>
+<!--            <class name="nopcommercetests.CustomerAccountTest"></class>-->
+        </classes>
+
+    </test>
+
+
+</suite>
