@@ -2,176 +2,240 @@ package nopcommercetests;
 
 import base.CommonAPI;
 import nopcommerce.nopcommercepages.*;
-import nopcommerce.nopcommerceenums.searchitems.Items;
-import nopcommerce.nopcommerceobjects.Customer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class CheckOutTest extends CommonAPI {
 
-    @Test(enabled = false)
-    public void testCreditCardCheckout() {
-        new RegisterLoginPage(getDriver()).registerAndLogin(new Customer());
-        new ItemsPage(getDriver()).buildYourOwnComputerGoToShoppingCart();
-        new CartPage(getDriver()).clickCheckOut();
-        new CheckOutPage(getDriver()).registeredUserCreditCardCheckout(new Customer());
-        Assert.assertTrue(new CheckOutCompletePage(getDriver()).yourOrderHasBeenProcessedIsDisplayed());
-        new CheckOutCompletePage(getDriver()).clickBackToHomeButton();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+    @Test(dataProvider = DataProviderCommerce.CreditData , dataProviderClass = DataProviderCommerce.class)
+    public void testCreditCardCheckout(String creditNumber, String creditCode) {
+        RegisterLoginPage login = new RegisterLoginPage(getDriver());
+        ItemsPage item = new ItemsPage(getDriver());
+        CartPage cart = new CartPage(getDriver());
+        CheckOutPage checkout= new CheckOutPage(getDriver());
+        CheckOutCompletePage complete = new CheckOutCompletePage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        login.registerAndLogin();
+        item.buildYourOwnComputerGoToShoppingCart();
+        cart.clickCheckOut();
+        checkout.registeredUserCreditCardCheckout(creditNumber, creditCode);
+        Assert.assertTrue(complete.yourOrderHasBeenProcessedIsDisplayed());
+        complete.clickBackToHomeButton();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 
-    @Test(enabled = false)
+    @Test(priority = 2)
     public void testCheckMoneyCheckout() {
-        new RegisterLoginPage(getDriver()).registerAndLogin(new Customer());
-        new ItemsPage(getDriver()).buildYourOwnComputerGoToShoppingCart();
-        new CartPage(getDriver()).clickCheckOut();
-        new CheckOutPage(getDriver()).registeredUserCheckMoneyCheckout(new Customer());
-        Assert.assertTrue(new CheckOutCompletePage(getDriver()).thankYouTextIsDisplayed());
-        new CheckOutCompletePage(getDriver()).clickBackToHomeButton();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+        RegisterLoginPage login = new RegisterLoginPage(getDriver());
+        ItemsPage item = new ItemsPage(getDriver());
+        CartPage cart = new CartPage(getDriver());
+        CheckOutPage checkout= new CheckOutPage(getDriver());
+        CheckOutCompletePage complete = new CheckOutCompletePage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        login.registerAndLogin();
+        item.buildYourOwnComputerGoToShoppingCart();
+        cart.clickCheckOut();
+        checkout.registeredUserCheckMoneyCheckout();
+        Assert.assertTrue(complete.thankYouTextIsDisplayed());
+        complete.clickBackToHomeButton();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 
-    @Test(enabled = false)
+    @Test(priority = 3)
     public void testMultiItemsCheckOutCheckMoney() {
-        new RegisterLoginPage(getDriver()).registerAndLogin(new Customer());
-        new NopCommerceHomePage(getDriver()).addMultipleItemsToCart();
-        new CartPage(getDriver()).clickCheckOut();
-        new CheckOutPage(getDriver()).registeredUserCheckMoneyCheckout(new Customer());
-        Assert.assertTrue(new CheckOutCompletePage(getDriver()).yourOrderHasBeenProcessedIsDisplayed());
-        new CheckOutCompletePage(getDriver()).clickBackToHomeButton();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+        RegisterLoginPage login = new RegisterLoginPage(getDriver());
+        CartPage cart = new CartPage(getDriver());
+        CheckOutPage checkout= new CheckOutPage(getDriver());
+        CheckOutCompletePage complete = new CheckOutCompletePage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        login.registerAndLogin();
+        commerce.addMultipleItemsToCart();
+        cart.clickCheckOut();
+        checkout.registeredUserCheckMoneyCheckout();
+        Assert.assertTrue(complete.yourOrderHasBeenProcessedIsDisplayed());
+        complete.clickBackToHomeButton();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 
-    @Test(enabled = false)
-    public void testMultiItemsCheckOutCreditCard() {
-        new RegisterLoginPage(getDriver()).registerAndLogin(new Customer());
-        new NopCommerceHomePage(getDriver()).addMultipleItemsToCart();
-        new CartPage(getDriver()).clickCheckOut();
-        new CheckOutPage(getDriver()).registeredUserCreditCardCheckout(new Customer());
-        Assert.assertTrue(new CheckOutCompletePage(getDriver()).thankYouTextIsDisplayed());
-        new CheckOutCompletePage(getDriver()).clickBackToHomeButton();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+    @Test(dataProvider = DataProviderCommerce.CreditData , dataProviderClass = DataProviderCommerce.class)
+    public void testMultiItemsCheckOutCreditCard(String creditNumber, String creditCode) {
+        RegisterLoginPage login = new RegisterLoginPage(getDriver());
+        CartPage cart = new CartPage(getDriver());
+        CheckOutPage checkout= new CheckOutPage(getDriver());
+        CheckOutCompletePage complete = new CheckOutCompletePage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        login.registerAndLogin();
+        commerce.addMultipleItemsToCart();
+        cart.clickCheckOut();
+        checkout.registeredUserCreditCardCheckout(creditNumber, creditCode);
+        Assert.assertTrue(complete.thankYouTextIsDisplayed());
+        complete.clickBackToHomeButton();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 
-    @Test(enabled = false)
-    public void testAddTwoItemsDeleteOneCheckOutCreditCard() {
-        new RegisterLoginPage(getDriver()).registerAndLogin(new Customer());
-        new ItemsPage(getDriver()).addComputerAndGiftCardToCart();
-        new CartPage(getDriver()).removeAndAddItemWithCheckout();
-        new CheckOutPage(getDriver()).registeredUserCreditCardCheckout(new Customer());
-        Assert.assertTrue(new CheckOutCompletePage(getDriver()).thankYouTextIsDisplayed());
-        new CheckOutCompletePage(getDriver()).clickBackToHomeButton();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+    @Test(dataProvider = DataProviderCommerce.CreditData , dataProviderClass = DataProviderCommerce.class)
+    public void testAddTwoItemsDeleteOneCheckOutCreditCard(String creditNumber, String creditCode) {
+        RegisterLoginPage login = new RegisterLoginPage(getDriver());
+        ItemsPage item = new ItemsPage(getDriver());
+        CartPage cart = new CartPage(getDriver());
+        CheckOutPage checkout= new CheckOutPage(getDriver());
+        CheckOutCompletePage complete = new CheckOutCompletePage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        login.registerAndLogin();
+        item.addComputerAndGiftCardToCart();
+        cart.removeAndAddItemWithCheckout();
+        checkout.registeredUserCreditCardCheckout(creditNumber, creditCode);
+        Assert.assertTrue(complete.thankYouTextIsDisplayed());
+        complete.clickBackToHomeButton();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 
-    @Test(enabled = false)
+    @Test(priority = 6)
     public void testAddTwoItemsDeleteOneCheckOutCheckMoney() {
-        new RegisterLoginPage(getDriver()).registerAndLogin(new Customer());
-        new ItemsPage(getDriver()).addComputerAndGiftCardToCart();
-        new CartPage(getDriver()).removeAndAddItemWithCheckout();
-        new CheckOutPage(getDriver()).registeredUserCheckMoneyCheckout(new Customer());
-        Assert.assertTrue(new CheckOutCompletePage(getDriver()).yourOrderHasBeenProcessedIsDisplayed());
-        new CheckOutCompletePage(getDriver()).clickBackToHomeButton();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+        RegisterLoginPage login = new RegisterLoginPage(getDriver());
+        ItemsPage item = new ItemsPage(getDriver());
+        CartPage cart = new CartPage(getDriver());
+        CheckOutPage checkout= new CheckOutPage(getDriver());
+        CheckOutCompletePage complete = new CheckOutCompletePage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        login.registerAndLogin();
+        item.addComputerAndGiftCardToCart();
+        cart.removeAndAddItemWithCheckout();
+        checkout.registeredUserCheckMoneyCheckout();
+        Assert.assertTrue(complete.yourOrderHasBeenProcessedIsDisplayed());
+        complete.clickBackToHomeButton();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 
-    @Test(enabled = false)
-    public void testCompareTwoItemsAddToCartCreditCard() {
-        new NopCommerceHomePage(getDriver()).compareItemsThenAddToCart();
-        new ItemsPage(getDriver()).clickShoppingCartToCheckOut();
-        new CheckOutPage(getDriver()).checkOutAsGuestWithCreditCard(new Customer());
-        Assert.assertTrue(new CheckOutCompletePage(getDriver()).yourOrderHasBeenProcessedIsDisplayed());
-        new CheckOutCompletePage(getDriver()).clickBackToHomeButton();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+    @Test(dataProvider = DataProviderCommerce.CreditData , dataProviderClass = DataProviderCommerce.class)
+    public void testCompareTwoItemsAddToCartCreditCard(String creditNumber, String creditCode) {
+        CheckOutPage checkout= new CheckOutPage(getDriver());
+        CheckOutCompletePage complete = new CheckOutCompletePage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        commerce.compareItemsThenAddToCart();
+        checkout.checkOutAsGuestWithCreditCard(creditNumber, creditCode);
+        Assert.assertTrue(complete.yourOrderHasBeenProcessedIsDisplayed());
+        complete.clickBackToHomeButton();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 
-    @Test(enabled = false)
+    @Test(priority = 8)
     public void testCompareTwoItemsAddToCartCheckMoney() {
-        new NopCommerceHomePage(getDriver()).compareItemsThenAddToCart();
-        new ItemsPage(getDriver()).clickShoppingCartToCheckOut();
-        new CheckOutPage(getDriver()).checkOutAsGuestWithCheckMoney(new Customer());
-        Assert.assertTrue(new CheckOutCompletePage(getDriver()).yourOrderHasBeenProcessedIsDisplayed());
-        new CheckOutCompletePage(getDriver()).clickBackToHomeButton();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+        CheckOutPage checkout= new CheckOutPage(getDriver());
+        CheckOutCompletePage complete = new CheckOutCompletePage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        commerce.compareItemsThenAddToCart();
+        checkout.checkOutAsGuestWithCheckMoney();
+        Assert.assertTrue(complete.yourOrderHasBeenProcessedIsDisplayed());
+        complete.clickBackToHomeButton();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 
-    @Test(enabled = false)
-    public void testCompareAddClearDeleteCheckoutGuestCreditCard() {
-        new NopCommerceHomePage(getDriver()).compareItemsDeleteOneAddToCart();
-        new CheckOutPage(getDriver()).checkOutAsGuestWithCreditCard(new Customer());
-        Assert.assertTrue(new CheckOutCompletePage(getDriver()).yourOrderHasBeenProcessedIsDisplayed());
-        new CheckOutCompletePage(getDriver()).clickBackToHomeButton();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+    @Test(dataProvider = DataProviderCommerce.CreditData , dataProviderClass = DataProviderCommerce.class)
+    public void testCompareAddClearDeleteCheckoutGuestCreditCard(String creditNumber, String creditCode) {
+        CheckOutPage checkout= new CheckOutPage(getDriver());
+        CheckOutCompletePage complete = new CheckOutCompletePage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        commerce.compareItemsDeleteOneAddToCart();
+        checkout.checkOutAsGuestWithCreditCard(creditNumber, creditCode);
+        Assert.assertTrue(complete.yourOrderHasBeenProcessedIsDisplayed());
+        complete.clickBackToHomeButton();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 
-    @Test(enabled = false)
+    @Test(priority = 10)
     public void testCompareAddClearDeleteCheckoutGuestCheckMoney() {
-        new NopCommerceHomePage(getDriver()).compareItemsDeleteOneAddToCart();
-        new CheckOutPage(getDriver()).checkOutAsGuestWithCheckMoney(new Customer());
-        Assert.assertTrue(new CheckOutCompletePage(getDriver()).yourOrderHasBeenProcessedIsDisplayed());
-        new CheckOutCompletePage(getDriver()).clickBackToHomeButton();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+        CheckOutPage checkout= new CheckOutPage(getDriver());
+        CheckOutCompletePage complete = new CheckOutCompletePage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        commerce.compareItemsDeleteOneAddToCart();
+        checkout.checkOutAsGuestWithCheckMoney();
+        Assert.assertTrue(complete.yourOrderHasBeenProcessedIsDisplayed());
+        complete.clickBackToHomeButton();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 
-    @Test(enabled = false)
-    public void testSearchItemCheckOutGuestCreditCard() {
-        new NopCommerceHomePage(getDriver()).searchAppleAddToCart();
-        new CheckOutPage(getDriver()).checkOutAsGuestWithCreditCard(new Customer());
-        Assert.assertTrue(new CheckOutCompletePage(getDriver()).yourOrderHasBeenProcessedIsDisplayed());
-        new CheckOutCompletePage(getDriver()).clickBackToHomeButton();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+    @Test(dataProvider = DataProviderCommerce.CreditData , dataProviderClass = DataProviderCommerce.class)
+    public void testSearchItemCheckOutGuestCreditCard(String creditNumber, String creditCode) {
+        CheckOutPage checkout= new CheckOutPage(getDriver());
+        CheckOutCompletePage complete = new CheckOutCompletePage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        commerce.searchAppleAddToCart();
+        checkout.checkOutAsGuestWithCreditCard(creditNumber, creditCode);
+        Assert.assertTrue(complete.yourOrderHasBeenProcessedIsDisplayed());
+        complete.clickBackToHomeButton();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 
-    @Test(enabled = false)
+    @Test(priority = 12)
     public void testSearchItemCheckOutGuestCheckMoney() {
-        new NopCommerceHomePage(getDriver()).searchAppleAddToCart();
-        new CheckOutPage(getDriver()).checkOutAsGuestWithCheckMoney(new Customer());
-        Assert.assertTrue(new CheckOutCompletePage(getDriver()).yourOrderHasBeenProcessedIsDisplayed());
-        new CheckOutCompletePage(getDriver()).clickBackToHomeButton();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+        CheckOutPage checkout= new CheckOutPage(getDriver());
+        CheckOutCompletePage complete = new CheckOutCompletePage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        commerce.searchAppleAddToCart();
+        checkout.checkOutAsGuestWithCheckMoney();
+        Assert.assertTrue(complete.yourOrderHasBeenProcessedIsDisplayed());
+        complete.clickBackToHomeButton();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 
-    @Test(enabled = true)
-    public void testChangeQuantityOfItemCheckOutGuestCreditCard() {
-        new NopCommerceHomePage(getDriver()).addBuildYourComputerToCart();
-        new ItemsPage(getDriver()).buildYourOwnComputerAddToCart();
-        new ItemsPage(getDriver()).changeProductQuantity();
-        new CheckOutPage(getDriver()).checkOutAsGuestWithCreditCard(new Customer());
-        Assert.assertTrue(new CheckOutCompletePage(getDriver()).yourOrderHasBeenProcessedIsDisplayed());
-        new CheckOutCompletePage(getDriver()).clickBackToHomeButton();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+    @Test(dataProvider = DataProviderCommerce.CreditData , dataProviderClass = DataProviderCommerce.class)
+    public void testChangeQuantityOfItemCheckOutGuestCreditCard(String creditNumber, String creditCode) {
+        ItemsPage item = new ItemsPage(getDriver());
+        CheckOutPage checkout= new CheckOutPage(getDriver());
+        CheckOutCompletePage complete = new CheckOutCompletePage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        commerce.addBuildYourComputerToCart();
+        item.buildYourOwnComputerAddToCart();
+        item.changeProductQuantity();
+        checkout.checkOutAsGuestWithCreditCard(creditNumber, creditCode);
+        Assert.assertTrue(complete.yourOrderHasBeenProcessedIsDisplayed());
+        complete.clickBackToHomeButton();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 
-    @Test(enabled = false)
+    @Test(priority = 14)
     public void testChangeQuantityOfItemCheckOutGuestCheckMoney() {
-        new NopCommerceHomePage(getDriver()).addBuildYourComputerToCart();
-        new ItemsPage(getDriver()).buildYourOwnComputerAddToCart();
-        new ItemsPage(getDriver()).changeProductQuantity();
-        new CheckOutPage(getDriver()).checkOutAsGuestWithCheckMoney(new Customer());
-        Assert.assertTrue(new CheckOutCompletePage(getDriver()).yourOrderHasBeenProcessedIsDisplayed());
-        new CheckOutCompletePage(getDriver()).clickBackToHomeButton();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+        ItemsPage item = new ItemsPage(getDriver());
+        CheckOutPage checkout= new CheckOutPage(getDriver());
+        CheckOutCompletePage complete = new CheckOutCompletePage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        commerce.addBuildYourComputerToCart();
+        item.buildYourOwnComputerAddToCart();
+        item.changeProductQuantity();
+        checkout.checkOutAsGuestWithCheckMoney();
+        Assert.assertTrue(complete.yourOrderHasBeenProcessedIsDisplayed());
+        complete.clickBackToHomeButton();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 
-    @Test(enabled = false)
+    @Test(priority = 15)
     public void testChangeQuantityUpdateOfItemCheckOutGuestCheckMoney() {
-        new NopCommerceHomePage(getDriver()).addBuildYourComputerToCart();
-        new ItemsPage(getDriver()).buildYourOwnComputerAddToCart();
-        new ItemsPage(getDriver()).mistakeChangeProductQuantity();
-        new CheckOutPage(getDriver()).checkOutAsGuestWithCheckMoney(new Customer());
-        Assert.assertTrue(new CheckOutCompletePage(getDriver()).yourOrderHasBeenProcessedIsDisplayed());
-        new CheckOutCompletePage(getDriver()).clickBackToHomeButton();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+        ItemsPage item = new ItemsPage(getDriver());
+        CheckOutPage checkout= new CheckOutPage(getDriver());
+        CheckOutCompletePage complete = new CheckOutCompletePage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        commerce.addBuildYourComputerToCart();
+        item.buildYourOwnComputerAddToCart();
+        item.mistakeChangeProductQuantity();
+        checkout.checkOutAsGuestWithCheckMoney();
+        Assert.assertTrue(complete.yourOrderHasBeenProcessedIsDisplayed());
+        complete.clickBackToHomeButton();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 
-    @Test(enabled = false)
-    public void testChangeQuantityUpdateOfItemCheckOutGuestCreditCard() {
-        new NopCommerceHomePage(getDriver()).addBuildYourComputerToCart();
-        new ItemsPage(getDriver()).buildYourOwnComputerAddToCart();
-        new ItemsPage(getDriver()).mistakeChangeProductQuantity();
-        new CheckOutPage(getDriver()).checkOutAsGuestWithCreditCard(new Customer());
-        Assert.assertTrue(new CheckOutCompletePage(getDriver()).yourOrderHasBeenProcessedIsDisplayed());
-        new CheckOutCompletePage(getDriver()).clickBackToHomeButton();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+    @Test(dataProvider = DataProviderCommerce.CreditData , dataProviderClass = DataProviderCommerce.class)
+    public void testChangeQuantityUpdateOfItemCheckOutGuestCreditCard(String creditNumber, String creditCode) {
+        ItemsPage item = new ItemsPage(getDriver());
+        CheckOutPage checkout= new CheckOutPage(getDriver());
+        CheckOutCompletePage complete = new CheckOutCompletePage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        commerce.addBuildYourComputerToCart();
+        item.buildYourOwnComputerAddToCart();
+        item.mistakeChangeProductQuantity();
+        checkout.checkOutAsGuestWithCreditCard(creditNumber, creditCode);
+        Assert.assertTrue(complete.yourOrderHasBeenProcessedIsDisplayed());
+        complete.clickBackToHomeButton();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 }

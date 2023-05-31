@@ -16,58 +16,77 @@ public class CustomerAccountTest extends CommonAPI {
 
     @Test()
     public void testReviewItem() {
-        new RegisterLoginPage(getDriver()).registerAndLogin(new Customer());
-        new NopCommerceHomePage(getDriver()).clickAppleMacLinkAddReview();
-        Assert.assertTrue(new ProductReviewsPage(getDriver()).reviewWasAdded());
-        new NopCommerceHomePage(getDriver()).clickMyAccount();
-        new MyAccountPage(getDriver()).clickCustomerAccountReviews();
-        Assert.assertTrue(new MyAccountPage(getDriver()).checkReviewItemHead());
+        RegisterLoginPage login = new RegisterLoginPage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        MyAccountPage account = new MyAccountPage(getDriver());
+        ProductReviewsPage product = new ProductReviewsPage(getDriver());
+        login.registerAndLogin();
+        commerce.clickAppleMacLinkAddReview();
+        Assert.assertTrue(product.reviewWasAdded());
+        commerce.clickMyAccount();
+        account.clickCustomerAccountReviews();
+        Assert.assertTrue(account.checkReviewItemHead());
     }
 
     @Test()
     public void testAddNewAddress() {
-        new RegisterLoginPage(getDriver()).registerAndLogin(new Customer());
-        new NopCommerceHomePage(getDriver()).clickMyAccount();
-        new MyAccountPage(getDriver()).addCustomerAddress();
-        Assert.assertTrue(new MyAccountPage(getDriver()).verifyAddressTextIsDisplayed());
-        Assert.assertTrue(new MyAccountPage(getDriver()).verifyAddressIsAdded());
+        RegisterLoginPage login = new RegisterLoginPage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        MyAccountPage account = new MyAccountPage(getDriver());
+        login.registerAndLogin();
+        commerce.clickMyAccount();
+        account.addCustomerAddress();
+        Assert.assertTrue(account.verifyAddressTextIsDisplayed());
+        Assert.assertTrue(account.verifyAddressIsAdded());
     }
 
     @Test()
     public void testAddNewAddressAndDelete() {
-        new RegisterLoginPage(getDriver()).registerAndLogin(new Customer());
-        new NopCommerceHomePage(getDriver()).clickMyAccount();
-        new MyAccountPage(getDriver()).addCustomerAddress();
-        Assert.assertTrue(new MyAccountPage(getDriver()).verifyAddressTextIsDisplayed());
-        Assert.assertTrue(new MyAccountPage(getDriver()).verifyAddressIsAdded());
-        new MyAccountPage(getDriver()).deleteNewAddedAddress();
-        Assert.assertTrue(new MyAccountPage(getDriver()).verifyNoAddresses());
+        RegisterLoginPage login = new RegisterLoginPage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        MyAccountPage account = new MyAccountPage(getDriver());
+        login.registerAndLogin();
+        commerce.clickMyAccount();
+        account.addCustomerAddress();
+        Assert.assertTrue(account.verifyAddressTextIsDisplayed());
+        Assert.assertTrue(account.verifyAddressIsAdded());
+        account.deleteNewAddedAddress();
+        Assert.assertTrue(account.verifyNoAddresses());
     }
 
     @Test()
     public void testChangeCustomerInfo() {
-        new RegisterLoginPage(getDriver()).registerAndLogin(new Customer());
-        new NopCommerceHomePage(getDriver()).clickMyAccount();
-        new MyAccountPage(getDriver()).clickCustomerInfo();
-        new RegisterLoginPage(getDriver()).changeCustomerInfo(new Customer());
-        Assert.assertTrue(new RegisterLoginPage(getDriver()).verifyCustomerInfoTextIsDisplayed());
+        RegisterLoginPage login = new RegisterLoginPage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        MyAccountPage account = new MyAccountPage(getDriver());
+        login.registerAndLogin();
+        commerce.clickMyAccount();
+        account.clickCustomerInfo();
+        login.changeCustomerInfo();
+        Assert.assertTrue(login.verifyCustomerInfoTextIsDisplayed());
     }
 
     @Test()
     public void testChangeOldPasswordWithNewOne() {
-        new RegisterLoginPage(getDriver()).registerAndLogin(new Customer());
-        new NopCommerceHomePage(getDriver()).clickMyAccount();
-        new MyAccountPage(getDriver()).changeOldPasswordToNewOne(new Customer());
-        Assert.assertTrue(new MyAccountPage(getDriver()).verifyPasswordChanged());
+        RegisterLoginPage login = new RegisterLoginPage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        MyAccountPage account = new MyAccountPage(getDriver());
+        login.registerAndLogin();
+        commerce.clickMyAccount();
+        account.changeOldPasswordToNewOne();
+        Assert.assertTrue(account.verifyPasswordChanged());
     }
 
     @Test()
     public void testChangePasswordLogoutLogBackIn() {
-        new RegisterLoginPage(getDriver()).registerAndLogin(new Customer());
-        new NopCommerceHomePage(getDriver()).clickMyAccount();
-        new MyAccountPage(getDriver()).changeOldPasswordToNewOne(new Customer());
-        Assert.assertTrue(new MyAccountPage(getDriver()).verifyPasswordChanged());
-        new MyAccountPage(getDriver()).logOutAndLogin();
-        Assert.assertTrue(new NopCommerceHomePage(getDriver()).welcomeToOurStoreIsDisplayed());
+        RegisterLoginPage login = new RegisterLoginPage(getDriver());
+        NopCommerceHomePage commerce = new NopCommerceHomePage(getDriver());
+        MyAccountPage account = new MyAccountPage(getDriver());
+        login.registerAndLogin();
+        commerce.clickMyAccount();
+        account.changeOldPasswordToNewOne();
+        Assert.assertTrue(account.verifyPasswordChanged());
+        account.logOutAndLogin();
+        Assert.assertTrue(commerce.welcomeToOurStoreIsDisplayed());
     }
 }

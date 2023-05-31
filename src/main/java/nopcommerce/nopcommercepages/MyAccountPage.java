@@ -1,18 +1,17 @@
 package nopcommerce.nopcommercepages;
 
 import base.CommonAPI;
-import nopcommerce.nopcommerceenums.country.Country;
-import nopcommerce.nopcommerceenums.excel.Excel;
 import nopcommerce.nopcommerceobjects.Customer;
+import nopcommerce.nopcommercereusablemethods.Reusable;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import utility.ExcelReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class MyAccountPage extends CommonAPI {
 
@@ -25,8 +24,11 @@ public class MyAccountPage extends CommonAPI {
     @FindBy(css = ".button-1.add-address-button")
     public WebElement addNewAddress;
 
-    @FindBy(id = "Address_LastName")
+    @FindBy(css = "#Address_LastName")
     public WebElement firstNameField;
+
+    @FindBy(css = "#FirstName")
+    public WebElement verifyFirstNameIsDisplayed;
 
     @FindBy(css = "#Address_FirstName")
     public WebElement lastNameField;
@@ -34,7 +36,7 @@ public class MyAccountPage extends CommonAPI {
     @FindBy(css = "#Address_Email")
     public WebElement emailField;
 
-    @FindBy(css = "##Address_CountryId")
+    @FindBy(css = "#Address_CountryId")
     public WebElement countryField;
 
     @FindBy(css = "#Address_StateProvinceId")
@@ -95,99 +97,100 @@ public class MyAccountPage extends CommonAPI {
     public WebElement accountReviewProductPage;
 
     @FindBy(css = "span[title='Close']")
-    public WebElement closePasswordChangeTittle;
+    public WebElement closePasswordChangeTitle;
 
     @FindBy(xpath = "//a[normalize-space()='Log out']")
     public WebElement logOutButton;
 
-    public static String newPassword;
+    private static final Logger LOG = LoggerFactory.getLogger(MyAccountPage.class);
 
     public MyAccountPage(WebDriver driver) {
         PageFactory.initElements(driver, this);
     }
 
     public boolean checkReviewItemHead() {
+        LOG.info("Account review product is displayed");
         return checkDisplayed(accountReviewProductPage);
     }
 
     public boolean verifyAddressTextIsDisplayed() {
+        LOG.info("New address added is displayed");
         return checkDisplayed(newAddressAddedText);
     }
 
     public boolean verifyAddressIsAdded() {
+        LOG.info("New address info box is displayed");
         return checkDisplayed(newAddressInfoBox);
     }
 
     public boolean verifyNoAddresses() {
+        LOG.info("Welcome to our store is displayed");
         return checkDisplayed(noAddressesText);
     }
 
     public boolean verifyPasswordChanged() {
+        LOG.info("Password has changed is displayed");
         return  checkDisplayed(passwordHasChangedText);
+    }
+
+    public boolean verifyNameIsDisplayed() {
+        LOG.info("Verify first name is displayed");
+        return  checkDisplayed(verifyFirstNameIsDisplayed);
     }
 
     public void clickCustomerInfo() {
         click(customerInfo);
+        LOG.info("Clicked on customer info");
     }
 
     public void clickCustomerAccountReviews() {
         click(customerAccountReviews);
+        LOG.info("Clicked on customer account review");
     }
 
     public void logOutAndLogin() {
-        click(closePasswordChangeTittle);
+        click(closePasswordChangeTitle);
+        LOG.info("Clicked on close password change title");
         waitFor(1);
         click(logOutButton);
+        LOG.info("Clicked on logout button");
         new RegisterLoginPage(getDriver()).logBackIn();
+        LOG.info("logged backed in");
     }
 
-    public void changeOldPasswordToNewOne(Customer customer) {
+    public void changeOldPasswordToNewOne() {
         click(changePasswordLink);
-        String oldPassword = RegisterLoginPage.password;
-        type(inputOldPasswordField,oldPassword);
-        type(newPasswordField, customer.getNewPassword());
-        type(confirmNewPasswordField, customer.getNewPassword());
+        LOG.info("Clicked change password link");
+        type(inputOldPasswordField, Reusable.password1);
+        LOG.info("Typed old password");
+        type(newPasswordField, Reusable.newPassword);
+        LOG.info("Typed new password");
+        type(confirmNewPasswordField, Reusable.newPassword);
+        LOG.info("Typed new password in confirm password field");
         click(changePasswordButton);
+        LOG.info("Clicked change password button");
     }
 
     public void deleteNewAddedAddress() {
         click(deleteAddress);
+        LOG.info("Clicked delete address");
         okAlert();
+        LOG.info("Clicked okay alert");
     }
 
     public void addCustomerAddress() {
         List<WebElement> click = Arrays.asList(customerAddress, addNewAddress);
         for (WebElement clickAll:click) {
          click(clickAll);
+            LOG.info("Product review was successfully added");
         }
-        firstNameLastNameEmail(new Customer());
-        addressAndPhoneNumber(new Customer());
+        new Reusable().firstNameLastNameEmail(new Customer(),firstNameField, lastNameField, emailField);
+        LOG.info("Entered first last name and email");
+        new Reusable().selectCountryAndState(countryField, stateField);
+        LOG.info("Selected from country and state field");
+        new Reusable().addressAndPhoneNumber(new Customer(), cityField, addressField, zipCodeField, phoneNumberField);
+        LOG.info("Entered in city, address, zipcode and phone number field");
         click(saveAddressButton);
-    }
-
-    public void firstNameLastNameEmail(Customer customer) {
-        List<String> nameFields = Arrays.asList(customer.getFirstName(), customer.getLastName(), customer.getEmail());
-        List<WebElement> nameElements = Arrays.asList(firstNameField, lastNameField, emailField);
-        for (int i = 0; i < nameFields.size(); i++) {
-            type(nameElements.get(i), nameFields.get(i));
-        }
-    }
-
-    public void addressAndPhoneNumber(Customer customer) {
-        selectCountryAndState(new Customer());
-        List<String> billingFields = Arrays.asList(customer.getCity(), customer.getAddress(), customer.getZipCode(), customer.getPhoneNumber());
-        List<WebElement> billingFieldsElements = Arrays.asList(cityField, addressField, zipCodeField, phoneNumberField);
-        for (int i = 0; i < billingFields.size(); i++) {
-            type(billingFieldsElements.get(i), billingFields.get(i));
-        }
-    }
-
-    public void selectCountryAndState(Customer customer) {
-        List<String> countryList = new ExcelReader(Excel.PATH.getExcel()).getEntireColumnForGivenHeader(Excel.SHEET.getExcel(), Excel.HEADER_NAME.getExcel());
-        String randomCountry = countryList.get(new Random().nextInt(countryList.size()));
-        selectFromDropdown(countryField, randomCountry);
-        if (Country.UNITED_STATES.getCountry().equals(randomCountry) || Country.CANADA.getCountry().equals(randomCountry)) {
-            selectFromDropdown(stateField, customer.getState());
-        }
+        LOG.info("Clicked save address button");
     }
 }
